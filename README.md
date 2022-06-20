@@ -26,11 +26,11 @@ test6 push
 
   |   일자    | 진행           | 내용                                |
   | :-------: | :------------- | :---------------------------------- |
-  | 05/16 AM  | OJT            | 과정설명<br>과제수행환경설명        |
-  | 05/16 PM  | Brain Storming | msaez.io                            |
-  | 05/17 ALL | Team Project   | 팀별과제 수행                       |
-  | 05/18 AM  | Team Project   | 팀별과제 수행                       |
-  | 05/18 PM  | Wrap Up        | 과제 제출<br>시작:14시<br>마감:16시 |
+  | 06/20 AM  | OJT            | 과정설명<br>과제수행환경설명        |
+  | 06/20 PM  | Brain Storming | msaez.io                            |
+  | 06/21 ALL | Team Project   | 팀별과제 수행                       |
+  | 06/22 AM  | Team Project   | 팀별과제 수행                       |
+  | 06/22 PM  | Wrap Up        | 과제 제출<br>시작:14시<br>마감:16시 |
 
 - 시간별 진행
 
