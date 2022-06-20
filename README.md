@@ -26,11 +26,11 @@ test6 push
 
   |   일자    | 진행           | 내용                                |
   | :-------: | :------------- | :---------------------------------- |
-  | 05/16 AM  | OJT            | 과정설명<br>과제수행환경설명        |
-  | 05/16 PM  | Brain Storming | msaez.io                            |
-  | 05/17 ALL | Team Project   | 팀별과제 수행                       |
-  | 05/18 AM  | Team Project   | 팀별과제 수행                       |
-  | 05/18 PM  | Wrap Up        | 과제 제출<br>시작:14시<br>마감:16시 |
+  | 06/20 AM  | OJT            | 과정설명<br>과제수행환경설명        |
+  | 06/20 PM  | Brain Storming | msaez.io                            |
+  | 06/21 ALL | Team Project   | 팀별과제 수행                       |
+  | 06/22 AM  | Team Project   | 팀별과제 수행                       |
+  | 06/22 PM  | Wrap Up        | 과제 제출<br>시작:14시<br>마감:16시 |
 
 - 시간별 진행
 
@@ -48,19 +48,10 @@ test6 push
 
 | 팀  |  성명   | 직급 | 소속              |
 | :-: | :-----: | :--: | :---------------- |
-|  1  | 🎖송상헌 | 과장 | 아키텍트팀        |
+|  1  | 송상헌 | 과장 | 아키텍트팀        |
 |     | 김순호  | 대리 | 보안운영팀        |
-|     | 윤정호  | 대리 | 네트워크운영팀    |
+|     | 🎖윤정호  | 대리 | 네트워크운영팀    |
 |     | 박원종  | 사원 | 방산운영1팀       |
-|  2  | 🎖이창국 | 부장 | Digital Native TF |
-|     | 탁세영  | 대리 | 시스템우녕1팀     |
-|     | 김주희  | 사원 | 서비스운영2팀     |
-|  3  | 🎖탁미정 | 과장 | 방산운영1팀       |
-|     | 백승진  | 대리 | SharedService2팀  |
-|     | 정현영  | 사원 | Digital Native TF |
-|  4  | 🎖이진현 | 과장 | 방산운영2팀       |
-|     | 송강욱  | 대리 | 서비스운영2팀팀   |
-|     | 이예진  | 사원 | SharedService3팀  |
 
 ## 🤷🏻‍♂️🤷🏻‍♀️ Curriculum
 
@@ -95,8 +86,9 @@ test6 push
 
 - <a href="https://www.msaez.io/#/" target="_blank">Brain Storming</a>
   - 팀별로 주제 선정 및 이벤트 스토밍 진행
-- GitHub : [https://github.com/wonslog/hw3-msa-capstone-project]
-- <a href="https://gitpod.io/#/https://github.com/wonslog/hw3-msa-capstone-project" target="_blank">GitPod</a>
+  - 결과 : https://labs.msaez.io/#/storming/IT74UK0hTgVAQL194nSu2xdq2tw1/6f6e576e230b867104636b3d859bbfcf
+- GitHub : [https://github.com/ohgnuz/hw3-msa-capstone-project]
+- <a href="https://gitpod.io/#/https://github.com/ohgnuz/hw3-msa-capstone-project" target="_blank">GitPod</a>
   - Github 계정 및 Repositoy(public) 준비 ( **for FORK** )
   - gitpod.io/#/{Github-Repository-URL}
   - Collaboration & Sharing
