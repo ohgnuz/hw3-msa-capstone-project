@@ -47,7 +47,7 @@ public class OrderStatusViewHandler {
             // view 객체 조회
 
             List<OrderStatus> orderStatusList = orderStatusRepository.findByOrderId(
-                payPlaced.getProdutId()
+                payPlaced.getOrderId()
             );
             for (OrderStatus orderStatus : orderStatusList) {
                 // view 객체에 이벤트의 eventDirectValue 를 set 함
@@ -67,7 +67,7 @@ public class OrderStatusViewHandler {
             // view 객체 조회
 
             List<OrderStatus> orderStatusList = orderStatusRepository.findByOrderId(
-                payChecked.getProdutId()
+                payChecked.getOrderId()
             );
             for (OrderStatus orderStatus : orderStatusList) {
                 // view 객체에 이벤트의 eventDirectValue 를 set 함
@@ -89,7 +89,7 @@ public class OrderStatusViewHandler {
             // view 객체 조회
 
             List<OrderStatus> orderStatusList = orderStatusRepository.findByOrderId(
-                payCanceled.getProdutId()
+                payCanceled.getOrderId()
             );
             for (OrderStatus orderStatus : orderStatusList) {
                 // view 객체에 이벤트의 eventDirectValue 를 set 함

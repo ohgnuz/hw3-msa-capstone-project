@@ -12,4 +12,13 @@ public class QtyDecreased extends AbstractEvent {
     private String name;
     private Integer qty;
     private Integer price;
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+    
 }

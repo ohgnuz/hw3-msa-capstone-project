@@ -30,6 +30,8 @@ public class Order {
 
     private Integer price;
 
+    private String orderStatus;
+    
     @PostPersist
     public void onPostPersist() {
         OrderPlaced orderPlaced = new OrderPlaced(this);
@@ -103,5 +105,13 @@ public class Order {
 
     public void setPrice(Integer price) {
         this.price = price;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
     }
 }
