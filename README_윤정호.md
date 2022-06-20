@@ -30,6 +30,15 @@
 6. 고객은 주문상태를 한 화면에서 확인할 수 있다
 7. 고객은 판매자가 입금확인완료 전에만 주문취소를 할 수 있다.
 
+주문상태 : 
+
+주문접수 - OrderPlaced Create
+입금확인중 - OrderPlaced Update
+입금확인완료 - QtyDecreased Update
+배송시작 - DeliveryStarted Update
+배송완료확인 - OrderClosed Update
+
+
 비기능적 요구사항
 1. 트랜잭션
     1. 결제가 되지 않은 예약 건은 성립되지 않아야 한다.  (Sync 호출)
