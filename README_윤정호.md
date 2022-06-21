@@ -71,15 +71,19 @@
 
 # SAGA Pattern 의 적용
 - 결제시스템(pay)에 문제가 발생해도 주문은 받을 수 있도록 Pub/Sub 구조로 설계
+- 
 ![image](https://user-images.githubusercontent.com/41348473/174700781-5b061161-2584-4abd-9174-a45f5c81daed.png)
 
 - 배송시스템이 문제발생 시 상품시스템(product)에서 발생한 주문이 누락되지않도록 Pub/Sub 구조로 설계
+- 
 ![image](https://user-images.githubusercontent.com/41348473/174713615-351b8a36-62dd-4d15-83b5-52c0d9b9e838.png)
 
 - 판매자가 결제확인 시도 시 재고가 0이면 주문이 취소되도록 Pub/Sub구조에서 Req/Res 구조로 변경
   - AS-IS
+  - 
 ![image](https://user-images.githubusercontent.com/41348473/174713672-9e72f5de-1d0c-474b-b610-b61175da0d1f.png)
   - TO-BE
+  - 
 ![image](https://user-images.githubusercontent.com/41348473/174713808-eb6cf9a7-9236-46b9-bcb8-e85856463656.png)
 
 
