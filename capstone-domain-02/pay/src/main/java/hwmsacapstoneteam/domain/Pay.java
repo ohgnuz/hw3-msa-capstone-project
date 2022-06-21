@@ -20,7 +20,7 @@ public class Pay {
 
     private Long orderId;
 
-    // private Long orderId;
+    private Long productId;
 
     private Integer price;
 
@@ -40,6 +40,13 @@ public class Pay {
         this.orderId = orderId;
     }
 
+    public Long getProductId() {
+        return productId;
+    }
+    
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
 
     public Integer getPrice() {
         return price;
