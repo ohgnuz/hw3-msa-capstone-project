@@ -20,6 +20,8 @@ public class Pay {
 
     private Long orderId;
 
+    private Long orderId;
+
     private Integer price;
 
     public Long getId() {
@@ -47,6 +49,7 @@ public class Pay {
         this.price = price;
     }
 
+
     @PostPersist
     public void onPostPersist() {
         PayChecked payChecked = new PayChecked(this);
@@ -67,22 +70,8 @@ public class Pay {
     }
 
     public static void payWait(OrderPlaced orderPlaced) {
-        /** Example 1:  new item 
-        Pay pay = new Pay();
-        repository().save(pay);
-
-        */
-
-        /** Example 2:  finding and process
-        
-        repository().findById(orderPlaced.get???()).ifPresent(pay->{
-            
-            pay // do something
-            repository().save(pay);
 
 
-         });
-        */
 
     }
 

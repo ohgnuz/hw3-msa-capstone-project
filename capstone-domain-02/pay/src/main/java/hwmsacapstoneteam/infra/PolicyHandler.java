@@ -31,7 +31,12 @@ public class PolicyHandler {
         );
 
         // Sample Logic //
-        Pay.payWait(event);
+        // Pay.payWait(event);
+
+        Pay pay = new Pay();
+        pay.setOrderId(orderPlaced.getId());
+        payRepository.save(pay);
+
     }
 
     @StreamListener(KafkaProcessor.INPUT)
