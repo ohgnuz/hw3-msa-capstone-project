@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -27,11 +28,20 @@ public class PolicyHandler {
         if (!payChecked.validate()) return;
         PayChecked event = payChecked;
         System.out.println(
-            "\n\n##### listener QtyDecrease : " + payChecked.toJson() + "\n\n"
+            "\n\n##### listener QtyDecrease!!!!!!!!!!!!!! : " + payChecked.toJson() + "\n\n"
         );
 
         // Sample Logic //
-        Product.qtyDecrease(event);
+        // Product.qtyDecrease(event);
+
+        Optional<Product> productOptional = productRepository.findById(payChecked.getProductId());
+        Product product = productOptional.get();
+
+        product.setOrderId(payChecked.getOrderId());
+        product.setId(payChecked.getProductId());
+        product.setQty(product.getQty() - payChecked.getQty());
+        productRepository.save(product);
+
     }
     // keep
 

@@ -9,8 +9,18 @@ import lombok.Data;
 public class PayChecked extends AbstractEvent {
 
     private Long id;
-    private Integer price;
+
     private Long orderId;
+
+    private Long productId;
+
+    private String productName;
+
+    private String address;
+
+    private Integer qty;
+
+    private Integer price;
 
     public PayChecked() {
         super();
@@ -21,6 +31,10 @@ public class PayChecked extends AbstractEvent {
         this.setId(pay.getId());
         this.setPrice(pay.getPrice());
         this.setOrderId(pay.getOrderId());
+        this.setProductId(pay.getProductId());
+        this.setProductName(pay.getProductName());
+        this.setQty(pay.getQty());
+        this.setAddress(pay.getAddress());
 
     }
     public Long getId() {
@@ -48,5 +62,35 @@ public class PayChecked extends AbstractEvent {
         this.price = price;
     }
 
+    public Long getProductId() {
+        return productId;
+    }
+    
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
 
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Integer getQty() {
+        return qty;
+    }
+
+    public void setQty(Integer qty) {
+        this.qty = qty;
+    }
 }

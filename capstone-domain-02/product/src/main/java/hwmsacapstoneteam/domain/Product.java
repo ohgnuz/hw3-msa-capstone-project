@@ -22,6 +22,8 @@ public class Product {
 
     private Integer price;
 
+    private Long orderId;
+
     public Long getId() {
         return id;
     }
@@ -54,8 +56,16 @@ public class Product {
         return price;
     }
 
-    @PostPersist
-    public void onPostPersist() {
+    public Long getOrderId() {
+        return orderId;
+    }
+    
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    @PostUpdate
+    public void onPostUpdate() {
         QtyDecreased qtyDecreased = new QtyDecreased(this);
         qtyDecreased.publishAfterCommit();
     }
@@ -71,8 +81,11 @@ public class Product {
         /** Example 1:  new item 
         Product product = new Product();
         repository().save(product);
-
         */
+
+
+
+
 
         /** Example 2:  finding and process
         

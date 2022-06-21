@@ -68,11 +68,11 @@ public class Order {
         OrderPlaced orderPlaced = new OrderPlaced(this);
         orderPlaced.publishAfterCommit();
 
-        OrderCanceled orderCanceled = new OrderCanceled(this);
-        orderCanceled.publishAfterCommit();
+        // OrderCanceled orderCanceled = new OrderCanceled(this);
+        // orderCanceled.publishAfterCommit();
 
-        OrderClosed orderClosed = new OrderClosed(this);
-        orderClosed.publishAfterCommit();
+        // OrderClosed orderClosed = new OrderClosed(this);
+        // orderClosed.publishAfterCommit();
     }
 
     public static OrderRepository repository() {
