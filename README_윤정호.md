@@ -6,16 +6,16 @@
   - [분석/설계](#분석설계)
     - [SAGA Pattern의 적용](#SAGA-Pattern-의-적용)
     - [CQRS Pattern의 적용](#CQRS-Pattern-의-적용)
-    - [Correlation / Compensation(Unique Key)](#Correlation-/-Compensation(Unique-Key))
-    - [Request / Response (Feign Client / Sync.Async)](#Request-/-Response-(Feign-Client-/-Sync.Async))
+    - [Correlation / Compensation(Unique Key)](#Correlation--CompensationUnique-Key)
+    - [Request / Response (Feign Client / Sync.Async)](#Request--Response-Feign-Client--Sync.Async))
   - [구현/운영](#구현/운영)
     - [Gateway](#Gateway)
-    - [Deploy / Pipeline](#Deploy-/-Pipeline)
+    - [Deploy / Pipeline](#Deploy--Pipeline)
     - [Circuit Breaker](#Circuit-Breaker)
-    - [Autoscale(HPA)](#Autoscale(HPA))
-    - [Self-Healing(Liveness Probe)](#Self-Healing(Liveness-Probe))
-    - [Zero-Downtime Deploy(Readiness Probe)](#Zero-Downtime-Deploy(Readiness-Probe))
-    - [Config Map / Persistence Volume](#Config-Map-/-Persistence-Volume)
+    - [Autoscale(HPA)](#Autoscalehpa)
+    - [Self-Healing(Liveness Probe)](#self-healingliveness-probe)
+    - [Zero-Downtime Deploy(Readiness Probe)](#zero-downtime-deployreadiness-probe)
+    - [Config Map / Persistence Volume](#config-map--persistence-volume)
     - [Polyglot](#Polyglot)
 
 
@@ -123,3 +123,4 @@
 # Self-Healing(Liveness Probe)
 # Zero-Downtime Deploy(Readiness Probe)
 # Config Map / Persistence Volume
+# Polyglot
