@@ -57,6 +57,8 @@
 - Config Map / Persistence Volume
 - Polyglot
 
+
+
 # 분석설계
 - 참여 : 윤정호, 김순호, 박원종
 - 이벤트스토밍 결과
@@ -83,7 +85,7 @@
 
 
 # CQRS Pattern 의 적용
-- 윤정호
+- 설계 : 윤정호
 - 고객이 주문상태를 한눈에 확인할 수 있도록 CQRS 패턴을 적용
 - 이벤트 별 주문상태 정의 
   - OrderPlaced : 주문접수
@@ -112,6 +114,14 @@
 ![image](https://user-images.githubusercontent.com/41348473/174713808-eb6cf9a7-9236-46b9-bcb8-e85856463656.png)
 - !!!Feign Client 구현에 대한 부분 추가필요
 - !!!
+
+
+# Correlation / Compensation(Unique Key)
+- 설계 : 윤정호
+- 모든 이벤트는 아래 Attribute를 가짐 : 
+  - orderId : 주문번호 식별자
+  - orderStatus : 주문상태 식별자
+
 
 # 구현/운영
 
