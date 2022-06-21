@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -35,7 +36,15 @@ public class PolicyHandler {
         );
 
         // Sample Logic //
-        Delivery.deliveryStart(event);
+        // Delivery.deliveryStart(event);
+        
+        Delivery delivery = new Delivery();
+
+        delivery.setOrderId(qtyDecreased.getOrderId());
+        deliveryRepository.save(delivery);
+
+
+
     }
     // keep
 

@@ -9,6 +9,7 @@ import lombok.Data;
 public class QtyDecreased extends AbstractEvent {
 
     private Long id;
+    private Long orderId;
     private String name;
     private Integer qty;
     private Integer price;
@@ -24,7 +25,16 @@ public class QtyDecreased extends AbstractEvent {
         this.setName(product.getName());
         this.setQty(product.getQty());
         this.setPrice(product.getPrice());
+        this.setOrderId(product.getOrderId());
 
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+    
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
     public Long getId() {
