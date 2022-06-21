@@ -7,7 +7,7 @@
     - [SAGA Pattern의 적용](#SAGA-Pattern-의-적용)
     - [CQRS Pattern의 적용](#CQRS-Pattern-의-적용)
     - [Correlation / Compensation(Unique Key)](#Correlation--CompensationUnique-Key)
-    - [Request / Response (Feign Client / Sync.Async)](#Request--Response-Feign-Client--Sync.Async))
+    - [Request / Response (Feign Client / Sync.Async)](#request--response-feign-client--syncasync)
   - [구현/운영](#구현/운영)
     - [Gateway](#Gateway)
     - [Deploy / Pipeline](#Deploy--Pipeline)
