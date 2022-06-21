@@ -12,7 +12,6 @@ public class OrderPlaced extends AbstractEvent {
     private String address;
     private Integer qty;
     private String productName;
-    private Integer price;
     private Long productId;
 
     public OrderPlaced(Order aggregate) {

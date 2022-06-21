@@ -12,7 +12,6 @@ public class OrderClosed extends AbstractEvent {
     private String address;
     private Integer qty;
     private String productName;
-    private Integer price;
     private Long productId;
 
     public OrderClosed(Order aggregate) {
