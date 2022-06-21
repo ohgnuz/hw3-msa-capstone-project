@@ -4,6 +4,7 @@
   - [서비스 시나리오](#서비스-시나리오)
   - [체크포인트](#체크포인트)
   - [분석/설계](#분석설계)
+    - [SAGA Pattern의 적용](#SAGA-Pattern-의-)
   - [구현:](#구현-)
     - [DDD 의 적용](#ddd-의-적용)
     - [폴리글랏 퍼시스턴스](#폴리글랏-퍼시스턴스)
@@ -57,7 +58,7 @@
 
 # 분석설계
 - 이벤트스토밍 결과
-- MSAEz 로 모델링한 이벤트스토밍 결과: https://labs.msaez.io/#/storming/IT74UK0hTgVAQL194nSu2xdq2tw1/6f6e576e230b867104636b3d859bbfcf
+- MSAEz 로 모델링한 이벤트스토밍 결과(최초): https://labs.msaez.io/#/storming/IT74UK0hTgVAQL194nSu2xdq2tw1/6f6e576e230b867104636b3d859bbfcf
 
 ![DDD](https://user-images.githubusercontent.com/41348473/174694494-6185835e-e492-4eb5-be59-b21806efa1a1.png)
 - 주문상태
@@ -66,3 +67,10 @@
   - 입금확인완료 - QtyDecreased Update
   - 배송시작 - DeliveryStarted Update
   - 배송완료확인 - OrderClosed Update
+
+# SAGA Pattern 의 적용
+- 결제시스템(pay)에 문제가 발생해도 주문은 받을 수 있도록 Pub/Sub 구조로 설계
+- ![image](https://user-images.githubusercontent.com/41348473/174700781-5b061161-2584-4abd-9174-a45f5c81daed.png)
+
+- 배송시스템이 문제발생 시 상품시스템(product)에서 발생한 주문이 누락되지않도록 Pub/Sub 구조로 설계
+- 
