@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 @Table(name = "Order_table")
@@ -23,7 +21,6 @@ public class Order {
     private String productName;
     private String address;
     private Integer qty;
-    
     
     public Long getId() {
         return id;

@@ -12,13 +12,43 @@ public class DeliveryStarted extends AbstractEvent {
     private String address;
     private Long orderId;
 
-    public DeliveryStarted(Delivery aggregate) {
-        super(aggregate);
-    }
-
     public DeliveryStarted() {
         super();
     }
+
+    public DeliveryStarted(Delivery delivery){
+        super();
+        this.setId(delivery.getId());
+        this.setAddress(delivery.getAddress());
+        this.setOrderId(delivery.getOrderId());
+
+    }
     // keep
+
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+    
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
 
 }
