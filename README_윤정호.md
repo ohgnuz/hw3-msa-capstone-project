@@ -61,8 +61,8 @@
 
 ![DDD](https://user-images.githubusercontent.com/41348473/174694494-6185835e-e492-4eb5-be59-b21806efa1a1.png)
 - 주문상태
- - 주문접수 - OrderPlaced Create
- - 입금확인중 - OrderPlaced Update
- - 입금확인완료 - QtyDecreased Update
- - 배송시작 - DeliveryStarted Update
- - 배송완료확인 - OrderClosed Update
+  - 주문접수 - OrderPlaced Create
+  - 입금확인중 - OrderPlaced Update
+  - 입금확인완료 - QtyDecreased Update
+  - 배송시작 - DeliveryStarted Update
+  - 배송완료확인 - OrderClosed Update
