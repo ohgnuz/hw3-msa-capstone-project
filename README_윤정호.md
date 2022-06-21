@@ -5,7 +5,7 @@
   - [체크포인트](#체크포인트)
   - [분석/설계](#분석설계)
     - [SAGA Pattern의 적용](#SAGA-Pattern-의-적용)
-    - [CQRS Pattern의 적용](#CQRS-Pattern-의-)
+    - [CQRS Pattern의 적용](#CQRS-Pattern-의-적용)
   - [구현:](#구현-)
     - [DDD 의 적용](#ddd-의-적용)
     - [폴리글랏 퍼시스턴스](#폴리글랏-퍼시스턴스)
