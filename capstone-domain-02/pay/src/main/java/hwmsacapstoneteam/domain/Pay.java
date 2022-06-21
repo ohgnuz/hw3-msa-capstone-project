@@ -22,7 +22,15 @@ public class Pay {
 
     private Long productId;
 
+    private String productName;
+
+    private String address;
+
+    private Integer qty;
+
     private Integer price;
+
+
 
     public Long getId() {
         return id;
@@ -56,7 +64,30 @@ public class Pay {
         this.price = price;
     }
 
+    public String getProductName() {
+        return productName;
+    }
 
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Integer getQty() {
+        return qty;
+    }
+
+    public void setQty(Integer qty) {
+        this.qty = qty;
+    }
+    
     @PostPersist
     public void onPostPersist() {
         PayChecked payChecked = new PayChecked(this);

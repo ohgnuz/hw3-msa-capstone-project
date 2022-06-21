@@ -36,6 +36,7 @@ public class PolicyHandler {
         Pay pay = new Pay();
         pay.setOrderId(orderPlaced.getId());
         pay.setProductId(orderPlaced.getProductId());
+        pay.setQty(orderPlaced.getQty());
         payRepository.save(pay);
 
     }
