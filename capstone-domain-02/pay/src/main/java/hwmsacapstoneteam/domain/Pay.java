@@ -20,7 +20,7 @@ public class Pay {
 
     private Long orderId;
 
-    private Long orderId;
+    // private Long orderId;
 
     private Integer price;
 
