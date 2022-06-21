@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: username/gateway:latest
+          image: 004814395703.dkr.ecr.us-east-1.amazonaws.com/gateway:latest
           ports:
             - containerPort: 8080
