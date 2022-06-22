@@ -5,7 +5,7 @@ metadata:
   labels:
     app: product
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: product
@@ -19,19 +19,3 @@ spec:
           image: 004814395703.dkr.ecr.us-east-1.amazonaws.com/product:latest
           ports:
             - containerPort: 8080
-          readinessProbe:
-            httpGet:
-              path: '/actuator/health'
-              port: 8080
-            initialDelaySeconds: 10
-            timeoutSeconds: 2
-            periodSeconds: 5
-            failureThreshold: 10
-          livenessProbe:
-            httpGet:
-              path: '/actuator/health'
-              port: 8080
-            initialDelaySeconds: 120
-            timeoutSeconds: 2
-            periodSeconds: 5
-            failureThreshold: 5
