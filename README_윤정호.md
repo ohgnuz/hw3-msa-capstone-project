@@ -85,7 +85,7 @@
 
 
 # CQRS Pattern 의 적용
-- 설계 : 윤정호
+- 설계 / 구현 : 윤정호
 - 고객이 주문상태를 한눈에 확인할 수 있도록 CQRS 패턴을 적용
 - 이벤트 별 주문상태 정의 
   - OrderPlaced : 주문접수
@@ -99,8 +99,128 @@
   - DeliveryStarted : 배송중
   - OrderClosed : 수령확인
     - 고객이 수령확인 버튼을 누르면 주문프로세스 종료
-  
-  
+
+- 각 단계에 맞게 orderStatus가 변경되는지에 관한 테스트 수행
+- orderPlaced 이벤트의 바로 다음인 payPlaced 상태로 넘어가기 전 상태와 비교
+
+order 프로세스만 띄우고 주문 발생
+```
+gitpod /workspace/hw3-msa-capstone-project (main) $ http http://localhost:8081/orders orderId=1 productId=1 productName="TV" price=100 qty=3
+HTTP/1.1 201 
+Connection: keep-alive
+Content-Type: application/json
+Date: Wed, 22 Jun 2022 06:26:33 GMT
+Keep-Alive: timeout=60
+Location: http://localhost:8081/orders/1
+Transfer-Encoding: chunked
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+
+{
+    "_links": {
+        "order": {
+            "href": "http://localhost:8081/orders/1"
+        },
+        "self": {
+            "href": "http://localhost:8081/orders/1"
+        }
+    },
+    "address": null,
+    "productId": 1,
+    "productName": "TV",
+    "qty": 3
+}
+```
+
+주문상태 조회 시 "주문접수" 상태로 확인됨
+```
+gitpod /workspace/hw3-msa-capstone-project (main) $ http http://localhost:8085/orderStatuses
+HTTP/1.1 200 
+Connection: keep-alive
+Content-Type: application/hal+json
+Date: Wed, 22 Jun 2022 06:27:12 GMT
+Keep-Alive: timeout=60
+Transfer-Encoding: chunked
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+
+{
+    "_embedded": {
+        "orderStatuses": [
+            {
+                "_links": {
+                    "orderStatus": {
+                        "href": "http://localhost:8085/orderStatuses/1"
+                    },
+                    "self": {
+                        "href": "http://localhost:8085/orderStatuses/1"
+                    }
+                },
+                "address": null,
+                "orderId": "1",
+                "orderStatus": "주문접수",
+                "price": "null",
+                "productId": "1",
+                "productName": "TV",
+                "qty": 3
+            }
+        ]
+    }
+```
+
+pay 서비스 기동 전 kafka consumer
+```
+gitpod /workspace/hw3-msa-capstone-project/kafka (main) $ docker exec -it kafka-kafka-1 /bin/kafka-console-consumer --bootstrap-server http://localhost:9092 --topic hwmsacapstoneteam --from-beginning
+{"eventType":"OrderPlaced","timestamp":1655879193504,"id":1,"address":null,"qty":3,"productName":"TV","productId":1}
+```
+
+
+pay 서비스 기동 후 kafka consumer
+```
+gitpod /workspace/hw3-msa-capstone-project/kafka (main) $ docker exec -it kafka-kafka-1 /bin/kafka-console-consumer --bootstrap-server http://localhost:9092 --topic hwmsacapstoneteam --from-beginning
+{"eventType":"OrderPlaced","timestamp":1655879193504,"id":1,"address":null,"qty":3,"productName":"TV","productId":1}
+{"eventType":"PayPlaced","timestamp":1655879526701,"id":1,"orderId":1,"productId":1,"productName":null,"address":null,"qty":3,"price":null}
+```
+
+pay 서비스 기동 후 orderStatus 변화 "주문접수" -> "입금확인대기"
+```
+gitpod /workspace/hw3-msa-capstone-project (main) $ http http://localhost:8085/orderStatuses
+HTTP/1.1 200 
+Connection: keep-alive
+Content-Type: application/hal+json
+Date: Wed, 22 Jun 2022 06:37:33 GMT
+Keep-Alive: timeout=60
+Transfer-Encoding: chunked
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+
+{
+    "_embedded": {
+        "orderStatuses": [
+            {
+                "_links": {
+                    "orderStatus": {
+                        "href": "http://localhost:8085/orderStatuses/1"
+                    },
+                    "self": {
+                        "href": "http://localhost:8085/orderStatuses/1"
+                    }
+                },
+                "address": null,
+                "orderId": "1",
+                "orderStatus": "입금확인대기",
+                "price": "null",
+                "productId": "1",
+                "productName": "TV",
+                "qty": 3
+            }
+        ]
+    },
+```
+
   
 # Request / Response (Feign Client / Sync.Async)
 - 설계 : 윤정호 / 구현 : 김순호
@@ -122,6 +242,122 @@
   - orderId : 주문번호 식별자
   - orderStatus : 주문상태 식별자
 
+product에 상품추가
+```
+gitpod /workspace/hw3-msa-capstone-project (main) $ http http://localhost:8084/products productId=1 name="TV" price=100 qty=10000
+HTTP/1.1 201 
+Connection: keep-alive
+Content-Type: application/json
+Date: Wed, 22 Jun 2022 06:45:37 GMT
+Keep-Alive: timeout=60
+Location: http://localhost:8084/products/1
+Transfer-Encoding: chunked
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+
+{
+    "_links": {
+        "product": {
+            "href": "http://localhost:8084/products/1"
+        },
+        "self": {
+            "href": "http://localhost:8084/products/1"
+        }
+    },
+    "name": "TV",
+    "orderId": null,
+    "price": 100,
+    "qty": 10000
+}
+
+order 호출 시 pay를 거쳐 재고감소 확인
+```
+gitpod /workspace/hw3-msa-capstone-project (main) $ http http://localhost:8081/orders orderId=2 productId=1 productName="TV" price=100 qty=3
+HTTP/1.1 201 
+Connection: keep-alive
+Content-Type: application/json
+Date: Wed, 22 Jun 2022 06:47:11 GMT
+Keep-Alive: timeout=60
+Location: http://localhost:8081/orders/2
+Transfer-Encoding: chunked
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+
+{
+    "_links": {
+        "order": {
+            "href": "http://localhost:8081/orders/2"
+        },
+        "self": {
+            "href": "http://localhost:8081/orders/2"
+        }
+    },
+    "address": null,
+    "productId": 1,
+    "productName": "TV",
+    "qty": 3
+}
+```
+
+kafka event
+```
+gitpod /workspace/hw3-msa-capstone-project/kafka (main) $ docker exec -it kafka-kafka-1 /bin/kafka-console-consumer --bootstrap-server http://localhost:9092 --topic hwmsacapstoneteam --from-beginning
+{"eventType":"OrderPlaced","timestamp":1655880431281,"id":2,"address":null,"qty":3,"productName":"TV","productId":1}
+{"eventType":"PayPlaced","timestamp":1655880431423,"id":1,"orderId":2,"productId":1,"productName":null,"address":null,"qty":3,"price":null}
+{"eventType":"PayChecked","timestamp":1655880431424,"id":1,"orderId":2,"productId":1,"productName":null,"address":null,"qty":3,"price":null}
+{"eventType":"QtyDecreased","timestamp":1655880431487,"id":1,"orderId":2,"name":"TV","qty":9997,"price":100}
+```
+
+product 감소
+```
+gitpod /workspace/hw3-msa-capstone-project (main) $ http http://localhost:8084/products
+HTTP/1.1 200 
+Connection: keep-alive
+Content-Type: application/hal+json
+Date: Wed, 22 Jun 2022 06:47:16 GMT
+Keep-Alive: timeout=60
+Transfer-Encoding: chunked
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+
+{
+    "_embedded": {
+        "products": [
+            {
+                "_links": {
+                    "product": {
+                        "href": "http://localhost:8084/products/1"
+                    },
+                    "self": {
+                        "href": "http://localhost:8084/products/1"
+                    }
+                },
+                "name": "TV",
+                "orderId": 2,
+                "price": 100,
+                "qty": 9997
+            }
+        ]
+    },
+    "_links": {
+        "profile": {
+            "href": "http://localhost:8084/profile/products"
+        },
+        "self": {
+            "href": "http://localhost:8084/products"
+        }
+    },
+    "page": {
+        "number": 0,
+        "size": 20,
+        "totalElements": 1,
+        "totalPages": 1
+    }
+}
+```
 
 # 구현/운영
 
