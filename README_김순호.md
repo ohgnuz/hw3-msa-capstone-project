@@ -129,16 +129,22 @@
 # Deploy / Pipeline
 # Circuit Breaker
 # Autoscale(HPA)
+
+- cpu 15% 초과 시 최대 10개 레플리카 scail-out 설정한다.
+```
 kubectl autoscale deploy pay --min=1 --max=10 --cpu-percent=15
 ```
-- CB 에서 했던 방식대로 워크로드를 1분 동안 동시 사용자 100명으로 걸어준다.
+
+- siege로 1분 동안 동시 사용자 100명으로 걸어준다.
 ```
 siege -c100 -t60S -v http://a4f11486e96b4480180cde891451e39b-355372236.us-east-1.elb.amazonaws.com:8080/pays
 ```
+
 - 오토스케일이 어떻게 되고 있는지 모니터링을 걸어둔다:
 ```
 kubectl get deploy pay -w
 ```
+
 - 어느정도 시간이 흐른 후 (약 30초) 스케일 아웃이 벌어지는 것을 확인할 수 있다:
 ```
 NAME    DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
