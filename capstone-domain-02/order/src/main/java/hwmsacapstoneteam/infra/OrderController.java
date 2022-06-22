@@ -18,4 +18,18 @@ public class OrderController {
     @Autowired
     OrderRepository orderRepository;
     // keep
+
+    @GetMapping(value = "/memleak")
+    public String Memleak() {
+        String[] S = new String[1000];
+        int i = 0 , j = 0;
+        
+        for (i = 0;i < 1000; i++) {
+            S[i] = new String();
+            for (j = 0; j < 1000; j++) {
+                S[i] += "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+            }
+        }
+        return "Memleak Test";
+    }
 }
