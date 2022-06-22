@@ -126,12 +126,73 @@
 # 구현/운영
 
 # Gateway
+
+
+
+Gateway의 resources/application.yaml에 각 서비스 uri 지정하여 pod에 service명으로 접근할 수 있도록 설정 
+```
+spring:
+  profiles: docker
+  cloud:
+    gateway:
+      routes:
+        - id: order
+          uri: http://order:8080
+          predicates:
+            - Path=/orders/** 
+        - id: pay
+          uri: http://pay:8080
+          predicates:
+            - Path=/pays/** 
+        - id: delivery
+          uri: http://delivery:8080
+          predicates:
+            - Path=/deliveries/** 
+        - id: product
+          uri: http://product:8080
+          predicates:
+            - Path=/products/** 
+        - id: frontend
+          uri: http://frontend:8080
+          predicates:
+            - Path=/**
+
+```
+
+게이트웨이는 Service Type LoadBalancer로 외부에 노출하고 나머지는 일반 Service로 오픈
+```
+kubectl expose deploy delivery --port=8080
+kubectl expose deploy order --port=8080
+kubectl expose deploy pay --port=8080
+kubectl expose deploy product --port=8080
+kubectl expose deploy delivery --port=8080
+kubectl expose deploy gateway --type=LoadBalancer --port=8080
+```
+
+서비스 expose 결과
+```
+gitpod /workspace/hw3-msa-capstone-project (main) $ kubectl get service
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP                                                              PORT(S)          AGE
+gateway      LoadBalancer   10.100.67.110   a4f11486e96b4480180cde891451e39b-355372236.us-east-1.elb.amazonaws.com   8080:30618/TCP   4h18m
+kubernetes   ClusterIP      10.100.0.1      <none>                                                                   443/TCP          4h27m
+order        ClusterIP      10.100.225.68   <none>                                                                   8080/TCP         3h52m
+pay          ClusterIP      10.100.152.65   <none>                                                                   8080/TCP         3h52m
+product      ClusterIP      10.100.95.161   <none>                                                                   8080/TCP         3h56m
+```
+
+브라우저에서 Gateway의 External-ip로 procuct 정보 확인결과
+- 
+![image](https://user-images.githubusercontent.com/41348473/174948774-e9abad5a-75bc-49c7-a51a-3d6679f741a4.png)
+
+
 # Deploy / Pipeline
 # Circuit Breaker
+- 담당 : 김순호
 # Autoscale(HPA)
+- 담당 : 김순호
 
 # Self-Healing(Liveness Probe)
-
+- 담당 : 윤정호
 - 주문 마이크로시스템의 Self-Healing을 위한 Liveness Probe 적용
   - 기본값 대신 명시적 Liveness Probe를 사용
   - Memory Leak 테스트 코드 실행을 용이하게 하기 위해 resource를 300MiB로 낮춤
@@ -268,7 +329,7 @@ siege2                     1/1     Running   0          3h28m
 
 
 # Zero-Downtime Deploy(Readiness Probe)
-
+- 담당 : 윤정호
 - 주문 마이크로시스템의 무정지배포를 위한 Readiness Probe 적용
 
 
