@@ -298,3 +298,24 @@ services:
       - ./db/mysql/data:/var/lib/mysql
       - ./db/mysql/init:/docker-entrypoint-initdb.d
 ```
+
+-- delivery application.yml 수정
+```
+spring:
+  profiles: default
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL57Dialect
+  datasource:
+    url: jdbc:mysql://${_DATASOURCE_ADDRESS:localhost:3306}/${_DATASOURCE_TABLESPACE:delivery_test}
+    username: ${_DATASOURCE_USERNAME:root}
+    password: ${_DATASOURCE_PASSWORD:root}
+    driverClassName: com.mysql.cj.jdbc.Driver
+```
