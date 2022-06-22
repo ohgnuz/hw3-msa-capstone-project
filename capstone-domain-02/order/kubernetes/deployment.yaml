@@ -5,7 +5,7 @@ metadata:
   labels:
     app: order
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       app: order
@@ -16,6 +16,16 @@ spec:
     spec:
       containers:
         - name: order
-          image: 004814395703.dkr.ecr.us-east-1.amazonaws.com/order:latest
+          image: 004814395703.dkr.ecr.us-east-1.amazonaws.com/order:memleak
+          resources:
+            limits:
+              memory: "300Mi"
+            requests:
+              memory: "300Mi"
           ports:
             - containerPort: 8080
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20

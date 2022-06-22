@@ -131,6 +131,142 @@
 # Autoscale(HPA)
 
 # Self-Healing(Liveness Probe)
+
+- 주문 마이크로시스템의 Self-Healing을 위한 Liveness Probe 적용
+  - 기본값 대신 명시적 Liveness Probe를 사용
+  - Memory Leak 테스트 코드 실행을 용이하게 하기 위해 resource를 300MiB로 낮춤
+
+Liveness Probe 적용 후 order의 deployment.yaml
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order
+  labels:
+    app: order
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: order
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      containers:
+        - name: order
+          image: 004814395703.dkr.ecr.us-east-1.amazonaws.com/order:memleak
+          resources:
+            limits:
+              memory: "300Mi"
+            requests:
+              memory: "300Mi"
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+```
+
+OrderController.java에 어설픈 memleak 유발 코드 삽입
+```
+@RestController
+@RequestMapping(value = "/orders")
+public class OrderController {
+
+    @GetMapping(value = "/memleak")
+    public String Memleak() {
+        String[] S = new String[100000];
+        int i = 0 , j = 0;
+
+        for (i = 0; i < 1000000; i++) {
+            S[i] = new String();
+            for (j = 0; j < 1000000000; j++) {
+                S[i] += "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+            }
+        }
+        return "Memleak Test";
+    }
+}
+```
+
+siege로 동접자 100명 시나리오로 접속시도로 memleak 유발
+```
+root@siege2:/# siege -c100 -t60S -v http://order:8080/orders/memleak
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: read error Connection reset by peer sock.c:539: Connection reset by peer
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: read error Connection reset by peer sock.c:539: Connection reset by peer
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+siege aborted due to excessive socket failure; you
+can change the failure threshold in $HOME/.siegerc
+
+Transactions:                      0 hits
+Availability:                   0.00 %
+Elapsed time:                  23.68 secs
+Data transferred:               0.00 MB
+Response time:                  0.00 secs
+Transaction rate:               0.00 trans/sec
+Throughput:                     0.00 MB/sec
+Concurrency:                    0.00
+Successful transactions:           0
+Failed transactions:            1123
+Longest transaction:            0.00
+Shortest transaction:           0.00
+```
+
+watch kubectl get pods 결과 OOM발생으로 인한 RESTART COUNT 증가를 관찰할 수 있음
+```
+Every 2.0s: kubectl get pods                          ohgnuz-hw3msacapstonepr-p696w009c6n: Wed Jun 22 04:55:39 2022
+
+NAME                       READY   STATUS      RESTARTS   AGE
+frontend-6b66bc86d-zs4r7   1/1     Running     0          3h37m
+gateway-86456789b-rtl7f    1/1     Running     0          4h11m
+order-5648f5bd68-2bll9     1/1     Running     2          5m37s
+order-5648f5bd68-c86j9     1/1     Running     2          5m39s
+order-5648f5bd68-kt47b     0/1     OOMKilled   1          5m39s
+order-5648f5bd68-w6jws     0/1     OOMKilled   1          5m36s
+pay-59b788c64-4pjr5        1/1     Running     0          3h5m
+product-6bbf69557-2sgtr    1/1     Running     0          3h43m
+product-6bbf69557-gp24c    1/1     Running     0          3h43m
+product-6bbf69557-l87pn    1/1     Running     0          3h43m
+siege1                     1/1     Running     0          3h24m
+siege2                     1/1     Running     0          3h24m
+
+Every 2.0s: kubectl get pods                          ohgnuz-hw3msacapstonepr-p696w009c6n: Wed Jun 22 04:59:26 2022
+
+NAME                       READY   STATUS    RESTARTS   AGE
+frontend-6b66bc86d-zs4r7   1/1     Running   0          3h41m
+gateway-86456789b-rtl7f    1/1     Running   0          4h15m
+order-5648f5bd68-2bll9     1/1     Running   3          9m24s
+order-5648f5bd68-c86j9     1/1     Running   3          9m26s
+order-5648f5bd68-kt47b     1/1     Running   2          9m26s
+order-5648f5bd68-w6jws     1/1     Running   2          9m23s
+pay-59b788c64-4pjr5        1/1     Running   0          3h9m
+product-6bbf69557-2sgtr    1/1     Running   0          3h46m
+product-6bbf69557-gp24c    1/1     Running   0          3h47m
+product-6bbf69557-l87pn    1/1     Running   0          3h46m
+siege1                     1/1     Running   0          3h28m
+siege2                     1/1     Running   0          3h28m
+```
+
+
 # Zero-Downtime Deploy(Readiness Probe)
 
 - 주문 마이크로시스템의 무정지배포를 위한 Readiness Probe 적용
