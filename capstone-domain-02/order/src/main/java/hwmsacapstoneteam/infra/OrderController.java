@@ -21,13 +21,13 @@ public class OrderController {
 
     @GetMapping(value = "/memleak")
     public String Memleak() {
-        String[] S = new String[1000];
+        String[] S = new String[100000];
         int i = 0 , j = 0;
-        
-        for (i = 0;i < 1000; i++) {
+
+        for (i = 0; i < 1000000; i++) {
             S[i] = new String();
-            for (j = 0; j < 1000; j++) {
-                S[i] += "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+            for (j = 0; j < 1000000000; j++) {
+                S[i] += "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
             }
         }
         return "Memleak Test";
