@@ -133,29 +133,187 @@
 # Self-Healing(Liveness Probe)
 # Zero-Downtime Deploy(Readiness Probe)
 
+- 주문 마이크로시스템의 무정지배포를 위한 Readiness Probe 적용
+
+
+Readiniss Probe 적용 전 order의 deployment.yaml
 ```
-[error] socket: unable to connect sock.c:249: Connection refused
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order
+  labels:
+    app: order
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: order
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      containers:
+        - name: order
+          image: 004814395703.dkr.ecr.us-east-1.amazonaws.com/order:latest
+          ports:
+            - containerPort: 8080
+```
+
+Readiness Probe 적용 전 siege 실행 중 deploy 시 결과
+```
+kubectl exec -it siege2 -- /bin/bash
+root@siege2:/# siege -c1 -t20S -v http://order:8080/orders --delay=1S
+** SIEGE 4.0.4
+** Preparing 1 concurrent users for battle.
+The server is now under siege...
+HTTP/1.1 200     0.00 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.00 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.00 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.00 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
 [error] socket: unable to connect sock.c:249: Connection refused
 HTTP/1.1 200     0.02 secs:     301 bytes ==> GET  /orders
 HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+[error] socket: unable to connect sock.c:249: Connection refused
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.00 secs:     301 bytes ==> GET  /orders
 [error] socket: unable to connect sock.c:249: Connection refused
 [error] socket: unable to connect sock.c:249: Connection refused
-siege aborted due to excessive socket failure; you
-can change the failure threshold in $HOME/.siegerc
+[error] socket: unable to connect sock.c:249: Connection refused
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+[error] socket: unable to connect sock.c:249: Connection refused
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
 
-Transactions:                   2306 hits
-Availability:                  69.25 %
-Elapsed time:                  23.76 secs
-Data transferred:               0.66 MB
+Lifting the server siege...
+Transactions:                     23 hits
+Availability:                  74.19 %
+Elapsed time:                  19.51 secs
+Data transferred:               0.01 MB
 Response time:                  0.01 secs
-Transaction rate:              97.05 trans/sec
-Throughput:                     0.03 MB/sec
-Concurrency:                    0.79
-Successful transactions:        2306
-Failed transactions:            1024
-Longest transaction:            0.04
+Transaction rate:               1.18 trans/sec
+Throughput:                     0.00 MB/sec
+Concurrency:                    0.01
+Successful transactions:          23
+Failed transactions:               8
+Longest transaction:            0.02
 Shortest transaction:           0.00
 ```
+
+Readiniss Probe 적용 후 order의 deployment.yaml
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order
+  labels:
+    app: order
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: order
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      containers:
+        - name: order
+          image: 004814395703.dkr.ecr.us-east-1.amazonaws.com/order:latest
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: '/orders'
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 10
+```
+
+Readiness Probe 적용 후 siege를 걸고 order의 replica를 2개 늘림
+initial Delay 후에도 서비스가 살 때 까지 더 기다리는 모습
+```
+gitpod /workspace/hw3-msa-capstone-project/capstone-domain-02/order (main) $ kubectl get pods
+NAME                       READY   STATUS    RESTARTS   AGE
+order-766d76c6b5-h6x79     0/1     Running   0          13s
+order-766d76c6b5-k82cf     1/1     Running   0          2m50s
+order-766d76c6b5-lzhlt     1/1     Running   0          2m50s
+order-766d76c6b5-rzzpr     0/1     Running   0          13s
+siege2                     1/1     Running   0          41m
+```
+
+Readiness Probe 적용 후 siege 실행 중 deploy 시 결과
+```
+kubectl exec -it siege2 -- /bin/bash
+root@siege2:/# siege -c1 -t20S -v http://order:8080/orders --delay=1S
+** SIEGE 4.0.4
+** Preparing 1 concurrent users for battle.
+The server is now under siege...
+HTTP/1.1 200     0.02 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.02 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.02 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.02 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.06 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.02 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.03 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.05 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.02 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.04 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.04 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.06 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.02 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.02 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.02 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.03 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.03 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.04 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.03 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.04 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.05 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.02 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.06 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.02 secs:     301 bytes ==> GET  /orders
+
+Lifting the server siege...
+Transactions:                     30 hits
+Availability:                 100.00 %
+Elapsed time:                  19.51 secs
+Data transferred:               0.01 MB
+Response time:                  0.03 secs
+Transaction rate:               1.54 trans/sec
+Throughput:                     0.00 MB/sec
+Concurrency:                    0.04
+Successful transactions:          30
+Failed transactions:               0
+Longest transaction:            0.06
+Shortest transaction:           0.01
+```
+
+
 
 # Config Map / Persistence Volume
 # Polyglot
