@@ -128,6 +128,91 @@
 # Gateway
 # Deploy / Pipeline
 # Circuit Breaker
+
+시나리오는 pay->product 시 연결 시 payPlaced 요청이 과도한 경우 서킷 브레이커를 통해 장애 격리
+- 서킷 브레이킹 프레임워크의 선택: Spring FeignClient + Hystrix 옵션을 사용하여 구현함
+- Hystrix 를 설정: 요청처리 쓰레드에서 처리시간이 610 밀리가 넘어서기 시작하여 어느정도 유지되면 서킷 브레이커로 닫히도록 (요청을 빠르게 실패처리, 차단) 설정
+
+```
+# application.yml
+feign:
+  hystrix:
+    enabled: true
+    
+hystrix:
+  command:
+    # 전역설정
+    default:
+      execution.isolation.thread.timeoutInMilliseconds: 610
+```
+
+- 피호출 서비스(결제:pay) 의 임의 부하 처리 - 400 밀리에서 증감 220 밀리 범위
+```
+# (pay) product.java (entity)
+    @PostUpdate
+    public void onPostUpdate() {
+      
+        ...
+
+        QtyDecreased qtyDecreased = new QtyDecreased(this);
+        
+        try {
+            Thread.currentThread().sleep((long) (400 + Math.random() * 220));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        qtyDecreased.publishAfterCommit();
+    }
+
+```
+
+- 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인 (동시 100명, 60초 동안)
+```
+siege -c100 -t60S -v --content-type "application/json" 'http://localhost:8081/orders POST {"productId": 1, "productName":"TV", "address":"test", "qty":1}'
+
+HTTP/1.1 201     1.07 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.07 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.07 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.07 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.07 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.07 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.07 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.08 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.08 secs:     248 bytes ==> POST http://localhost:8081/orders
+
+* 요청이 과도하여 CB를 동작함 요청을 차단
+
+HTTP/1.1 201     1.08 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.08 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.08 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.08 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.07 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     0.82 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     0.82 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     0.82 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     2.02 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     0.82 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     0.82 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     0.82 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     0.81 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     0.81 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     0.81 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     0.82 secs:     248 bytes ==> POST http://localhost:8081/orders
+
+* 요청을 어느정도 돌려보내고나니, 기존에 밀린 일들이 처리되었고, 회로를 닫아 요청을 다시 받기 시작
+
+HTTP/1.1 201     0.27 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     0.82 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.08 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     0.82 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.08 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.08 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     0.82 secs:     248 bytes ==> POST http://localhost:8081/orders
+HTTP/1.1 201     1.08 secs:     248 bytes ==> POST http://localhost:8081/orders
+
+```
+
 # Autoscale(HPA)
 
 - cpu 15% 초과 시 최대 10개 레플리카 scail-out 설정한다.

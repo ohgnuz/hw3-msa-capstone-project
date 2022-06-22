@@ -67,6 +67,13 @@ public class Product {
     @PostUpdate
     public void onPostUpdate() {
         QtyDecreased qtyDecreased = new QtyDecreased(this);
+        
+        try {
+            Thread.currentThread().sleep((long) (400 + Math.random() * 220));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         qtyDecreased.publishAfterCommit();
     }
 
