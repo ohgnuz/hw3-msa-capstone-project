@@ -273,6 +273,7 @@ Vary: Access-Control-Request-Headers
 
 order 호출 시 pay를 거쳐 재고감소 확인
 ```
+```
 gitpod /workspace/hw3-msa-capstone-project (main) $ http http://localhost:8081/orders orderId=2 productId=1 productName="TV" price=100 qty=3
 HTTP/1.1 201 
 Connection: keep-alive
