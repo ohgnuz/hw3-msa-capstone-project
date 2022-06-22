@@ -299,23 +299,21 @@ services:
       - ./db/mysql/init:/docker-entrypoint-initdb.d
 ```
 
--- delivery application.yml 수정
+- delivery application.yml 수정
 ```
 spring:
   profiles: default
   jpa:
-    hibernate:
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-      ddl-auto: update
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        dialect: org.hibernate.dialect.MySQL57Dialect
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    generate-ddl: true
+    show-sql: true
   datasource:
-    url: jdbc:mysql://${_DATASOURCE_ADDRESS:localhost:3306}/${_DATASOURCE_TABLESPACE:delivery_test}
-    username: ${_DATASOURCE_USERNAME:root}
-    password: ${_DATASOURCE_PASSWORD:root}
-    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/delivery_test
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
 ```
+
+- 설정 후 deliveryStarted json 데이터가 mysql db에 적재될 것으로 기대하였으나
+- jdbc 등 dependency 문제가 발생하여 결과를 확인하진 못함
