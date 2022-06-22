@@ -132,7 +132,8 @@
 
 # Self-Healing(Liveness Probe)
 # Zero-Downtime Deploy(Readiness Probe)
-'''
+
+```
 [error] socket: unable to connect sock.c:249: Connection refused
 [error] socket: unable to connect sock.c:249: Connection refused
 HTTP/1.1 200     0.02 secs:     301 bytes ==> GET  /orders
@@ -154,7 +155,7 @@ Successful transactions:        2306
 Failed transactions:            1024
 Longest transaction:            0.04
 Shortest transaction:           0.00
-'''
+```
 
 # Config Map / Persistence Volume
 # Polyglot
