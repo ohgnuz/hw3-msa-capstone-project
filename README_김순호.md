@@ -269,3 +269,32 @@ Shortest transaction:           0.01
 # Zero-Downtime Deploy(Readiness Probe)
 # Config Map / Persistence Volume
 # Polyglot
+
+- delivery started 이벤트를 mysql database에 적재
+```
+docker-compose.yml
+
+mysql db pull and container up
+
+version: '3' # docker compose 버전
+services:
+  local-db:
+    image: library/mysql:8.0
+    container_name: mysql-container # 컨테이너 이름
+    restart: always
+    ports:
+      - 3306:3306 # 로컬의 3306 포트(좌항)를 컨테이너의 3306포트(우항)로 연결
+    environment:
+      MYSQL_USER: eads
+      MYSQL_PASSWORD: eads
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Seoul
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --lower_case_table_names=1
+      - --sort_buffer_size=256000000
+    volumes:
+      - ./db/mysql/data:/var/lib/mysql
+      - ./db/mysql/init:/docker-entrypoint-initdb.d
+```
