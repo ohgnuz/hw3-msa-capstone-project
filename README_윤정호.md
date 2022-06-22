@@ -132,5 +132,29 @@
 
 # Self-Healing(Liveness Probe)
 # Zero-Downtime Deploy(Readiness Probe)
+'''
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+HTTP/1.1 200     0.02 secs:     301 bytes ==> GET  /orders
+HTTP/1.1 200     0.01 secs:     301 bytes ==> GET  /orders
+[error] socket: unable to connect sock.c:249: Connection refused
+[error] socket: unable to connect sock.c:249: Connection refused
+siege aborted due to excessive socket failure; you
+can change the failure threshold in $HOME/.siegerc
+
+Transactions:                   2306 hits
+Availability:                  69.25 %
+Elapsed time:                  23.76 secs
+Data transferred:               0.66 MB
+Response time:                  0.01 secs
+Transaction rate:              97.05 trans/sec
+Throughput:                     0.03 MB/sec
+Concurrency:                    0.79
+Successful transactions:        2306
+Failed transactions:            1024
+Longest transaction:            0.04
+Shortest transaction:           0.00
+'''
+
 # Config Map / Persistence Volume
 # Polyglot
