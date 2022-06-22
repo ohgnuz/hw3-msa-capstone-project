@@ -127,7 +127,7 @@
 
 # Gateway
 
-
+- 서비스의 진입점 통일을 위한 Gateway구현
 
 Gateway의 resources/application.yaml에 각 서비스 uri 지정하여 pod에 service명으로 접근할 수 있도록 설정 
 ```
@@ -182,8 +182,7 @@ product      ClusterIP      10.100.95.161   <none>                              
 
 브라우저에서 Gateway의 External-ip로 procuct 정보 확인결과
 - 
-![image](https://user-images.githubusercontent.com/41348473/174948774-e9abad5a-75bc-49c7-a51a-3d6679f741a4.png)
-
+![image](https://user-images.githubusercontent.com/41348473/174949994-a93a5211-e6d1-4611-8337-2adc3ad1b11d.png)
 
 # Deploy / Pipeline
 # Circuit Breaker
