@@ -131,9 +131,9 @@
 # Autoscale(HPA)
 kubectl autoscale deploy pay --min=1 --max=10 --cpu-percent=15
 ```
-- CB 에서 했던 방식대로 워크로드를 2분 동안 걸어준다.
+- CB 에서 했던 방식대로 워크로드를 1분 동안 동시 사용자 100명으로 걸어준다.
 ```
-siege -c100 -t120S -r10 --content-type "application/json" 'http://localhost:8081/orders POST {"item": "chicken"}'
+siege -c100 -t60S -v http://a4f11486e96b4480180cde891451e39b-355372236.us-east-1.elb.amazonaws.com:8080/pays
 ```
 - 오토스케일이 어떻게 되고 있는지 모니터링을 걸어둔다:
 ```
@@ -142,21 +142,36 @@ kubectl get deploy pay -w
 - 어느정도 시간이 흐른 후 (약 30초) 스케일 아웃이 벌어지는 것을 확인할 수 있다:
 ```
 NAME    DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-pay     1         1         1            1           17s
-pay     1         2         1            1           45s
-pay     1         4         1            1           1m
+pay    1/1     1            1           46m
+
+pay    1/1     1            1           54m
+pay    0/1     0            0           0s
+pay    0/1     0            0           1s
+pay    0/1     0            0           1s
+pay    0/1     1            0           1s
+pay    1/1     1            1           3s
+pay    1/1     1            1           4m51s
+pay    0/1     0            0           0s
+pay    0/1     0            0           0s
+pay    0/1     0            0           0s
+pay    0/1     1            0           0s
+pay    1/1     1            1           1s
 :
 ```
-- siege 의 로그를 보아도 전체적인 성공률이 높아진 것을 확인 할 수 있다. 
+- siege 의 로그를 확인 결과 가용성 100%로 유실이 없음을 확인하였다.
 ```
-Transactions:		        5078 hits
-Availability:		       92.45 %
-Elapsed time:		       120 secs
-Data transferred:	        0.34 MB
-Response time:		        5.60 secs
-Transaction rate:	       17.15 trans/sec
-Throughput:		        0.01 MB/sec
-Concurrency:		       96.02
+Transactions:                  25068 hits
+Availability:                 100.00 %
+Elapsed time:                  59.85 secs
+Data transferred:              10.16 MB
+Response time:                  0.15 secs
+Transaction rate:             418.85 trans/sec
+Throughput:                     0.17 MB/sec
+Concurrency:                   64.21
+Successful transactions:       25068
+Failed transactions:               1
+Longest transaction:           15.47
+Shortest transaction:           0.01
 ```
 
 # Self-Healing(Liveness Probe)
